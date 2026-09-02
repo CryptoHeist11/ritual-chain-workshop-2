@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { NamesProvider } from "./context/NamesContext";
 import { Header } from "./components/Header";
 import { HeroSearch } from "./components/HeroSearch";
@@ -6,12 +6,36 @@ import { ReverseResolution } from "./components/ReverseResolution";
 import { NameExplorer } from "./components/NameExplorer";
 import { NameDetailModal } from "./components/NameDetailModal";
 import { FAUCET_URL, RITUAL_CHAIN } from "./config";
-import { Cpu, ExternalLink } from "lucide-react";
+import { Cpu, ExternalLink, X } from "lucide-react";
 
 const MainLayout: React.FC = () => {
+  const [showBanner, setShowBanner] = useState<boolean>(true);
+
   return (
     <div className="app-viewport">
       <Header />
+
+      {/* Dismissible Demo Mode Status Banner */}
+      {showBanner && (
+        <div className="status-banner-container">
+          <div className="status-banner-content">
+            <div className="status-banner-text-wrapper">
+              <span className="status-banner-title">⚠️ Demo Mode Active</span>
+              <span className="status-banner-message">
+                The Ritual Testnet is temporarily unavailable. You can continue exploring the application and testing its features in Demo Mode. Live testnet interactions will resume once the network is back online.
+              </span>
+            </div>
+            <button
+              onClick={() => setShowBanner(false)}
+              className="status-banner-close-btn"
+              title="Dismiss banner"
+              aria-label="Dismiss banner"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       <main className="main-content-container">
         {/* Landing Hero & Search Component */}

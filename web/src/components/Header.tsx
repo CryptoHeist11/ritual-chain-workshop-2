@@ -1,10 +1,26 @@
-import React from "react";
-import { ExternalLink, ShieldCheck, Wallet, Sparkles, Network } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { ExternalLink, ShieldCheck, Wallet, Sparkles, Network, Sun, Moon } from "lucide-react";
 import { useNames } from "../context/NamesContext";
 import { FAUCET_URL, truncateAddress } from "../config";
 
 export const Header: React.FC = () => {
   const { mode, setMode, walletAddress, connectWallet, disconnectWallet } = useNames();
+
+  // Initialize theme based on user's system preference
+  const [theme, setTheme] = useState<"dark" | "light">(() => {
+    if (typeof window !== "undefined" && window.matchMedia) {
+      return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    }
+    return "dark";
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
 
   return (
     <header className="header-container">
@@ -12,7 +28,7 @@ export const Header: React.FC = () => {
         {/* Brand */}
         <div className="brand-badge">
           <div className="brand-icon">
-            <Sparkles className="w-5 h-5 text-purple-400" />
+            <img src="/ritual-logo.png" alt="Ritual Logo" className="w-5 h-5 object-contain" />
           </div>
           <div>
             <h1 className="brand-title">Ritual Names</h1>
@@ -20,23 +36,39 @@ export const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Center Mode Switch */}
-        <div className="mode-switch-wrapper">
+        {/* Center Mode Switch & Theme Toggle */}
+        <div className="flex items-center gap-2">
+          <div className="mode-switch-wrapper">
+            <button
+              type="button"
+              onClick={() => setMode("demo")}
+              className={`mode-btn ${mode === "demo" ? "mode-btn-active" : ""}`}
+            >
+              <Sparkles className="w-4 h-4 mr-1.5 inline" />
+              Demo Mode
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode("testnet")}
+              className={`mode-btn ${mode === "testnet" ? "mode-btn-active" : ""}`}
+            >
+              <Network className="w-4 h-4 mr-1.5 inline" />
+              Testnet Mode
+            </button>
+          </div>
+
           <button
             type="button"
-            onClick={() => setMode("demo")}
-            className={`mode-btn ${mode === "demo" ? "mode-btn-active" : ""}`}
+            onClick={toggleTheme}
+            className="theme-toggle-btn"
+            title={`Switch to ${theme === "dark" ? "Light" : "Dark"} Mode`}
+            aria-label="Toggle theme"
           >
-            <Sparkles className="w-4 h-4 mr-1.5 inline" />
-            Demo Mode
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode("testnet")}
-            className={`mode-btn ${mode === "testnet" ? "mode-btn-active" : ""}`}
-          >
-            <Network className="w-4 h-4 mr-1.5 inline" />
-            Testnet Mode
+            {theme === "dark" ? (
+              <Sun className="w-4 h-4 text-amber-400" />
+            ) : (
+              <Moon className="w-4 h-4 text-indigo-600" />
+            )}
           </button>
         </div>
 
